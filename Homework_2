@@ -1,0 +1,195 @@
+####### ANSWER TO QUESTION 1 #######
+
+db.createCollection("Customer", {
+validator:{
+$jsonSchema:{
+bsonType:"object", 
+required: ["customer_numb","customer_first_name","customer_last_name"], 
+properties: {
+customer_numb:{
+bsonType: "string",
+description: ""
+}, 
+customer_first_name:{
+bsonType: "string", 
+description: ""
+}, 
+customer_last_name: {
+bsonType: "string", 
+description: ""
+}, 
+customer_street: {
+bsonType: ["string"], 
+description: ""
+}, 
+customer_city: {
+bsonType: ["string"], 
+description: ""
+}, 
+customer_state: {
+bsonType: ["string"], 
+description: ""
+}, 
+customer_zip: {
+bsonType: ["string"], 
+description: ""
+}, 
+customer_phone: {
+bsonType: ["string"], 
+description: ""
+}, 
+"Order": {
+bsonType: "object", 
+required: ["order_numb", "customer_numb", "order_date"], properties:{
+order_numb: {
+bsonType: "int", 
+description: ""
+}, 
+customer_numb: {
+bsonType: "string", 
+description: ""
+}, 
+order_date: {
+bsonType: "string", 
+description: ""
+}, 
+credit_card_numb: {
+bsonType: ["int"], 
+description: ""
+}, 
+credit_card_exp_date: {
+             bsonType: [ "string" ],
+              description: ""
+},
+"order_complete?" : {
+bsonType: ["bool"], 
+description: ""
+}, 
+"pickup_or_ship?" : {
+bsonType: ["string"], 
+description: ""}}}}},)
+
+db.Customer.insertMany([
+{
+customer_numb: "ASD123", 
+customer_first_name: "David", 
+customer_last_name: "Shell", 
+customer_street: "Normandie Ave", 
+customer_city: "Los Angeles", 
+customer_state: "CA", 
+customer_zip: "90010", 
+customer_phone: "1231236537", 
+order:[{
+"order_number": 213, 
+"customer_numb": " ASD123", 
+"order_date": "01/01/2021", 
+"credit_card_numb": 3456, 
+"credit_card_exp_date": "10/25/2022", 
+"order_complete?": true, 
+"pickup_or_ship": "ship"},
+{"order_number": 324, 
+"customer_numb": " ASD123", 
+"order_date": "05/20/2021", 
+"credit_card_numb": 3456, 
+"credit_card_exp_date": "10/25/2022", 
+"order_complete?": true, 
+"pickup_or_ship": "ship",},
+{"order_number": 343, 
+"customer_numb": " ASD123", 
+"order_date": "01/01/2022", 
+"credit_card_numb": 3456, 
+"credit_card_exp_date": "10/25/2022", 
+"order_complete?": true, 
+"pickup_or_ship": "pickup"}]},
+{customer_numb: "BCD456", 
+customer_first_name: "David", 
+customer_last_name: "Lee", 
+customer_street: "Vermont Ave", 
+customer_city: "Los Angeles", 
+customer_state: "CA", 
+customer_zip: "9015", 
+customer_phone: "5236484890", 
+order:[{
+"order_number": 234, 
+"customer_numb": " BCD456", 
+"order_date": "01/05/2021", 
+"credit_card_numb": 2749, 
+"credit_card_exp_date": "12/07/2025", 
+"order_complete?": true, 
+"pickup_or_ship": "ship"},
+{"order_number": 543, 
+"customer_numb": " BCD456", 
+"order_date": "10/08/2021", 
+"credit_card_numb": 2749,
+"credit_card_exp_date": "12/07/2025", 
+"order_complete?": false, 
+"pickup_or_ship": "pickup"},
+{"order_number": 546, 
+"customer_numb": " BCD456", 
+"order_date": "01/10/2022", 
+"credit_card_numb": 2749, 
+"credit_card_exp_date": "12/07/2025", 
+"order_complete?": true, 
+"pickup_or_ship": "pickup"}]}])
+
+db.createCollection("Order", {
+validator:{
+$jsonSchema: {
+bsonType: "object", 
+required: ["order_numb", "customer_numb"], 
+properties: {
+order_numb: {
+bsonType: "int", 
+description: ""}, 
+customer_numb:{
+bsonType: "string", 
+description: ""}, 
+order_date: {
+bsonType: "string", 
+description: ""}, 
+credit_card_numb: {
+bsonType: ["int"], 
+description: ""}, 
+credit_card_exp_date: {
+bsonType: ["string"], 
+description: ""}, 
+"order_complete?": {
+bsonType: ["bool"], 
+description: ""}, 
+"pickup_or_ship": {
+bsonType: ["string"], 
+description: ""}}}}})
+{ ok: 1 }
+
+db.Customer.aggregate([{
+$lookup: {
+from: "Order",
+localField: "customer_numb", 
+foreignField: "customer_numb", 
+as: "customer_numb"}}])
+
+
+
+################ ANSWER TO QUESTION 2 ###################
+
+db.createCollection('student')
+
+db.student.insert({Name:'Adam', Phone:'1231230001', Street:'100 Vermont Ave', City:'Los Angeles', State:'CA', Zip:'90005'})
+db.student.insertMany([
+{Name:'Bob', Phone:'1231230002', Street:'200 Vermont Ave', City:'Los Angeles', State:'CA', Zip:'90010'},
+{Name:'Bill', Phone:'1231230003', Street:'300 Vermont Ave', City:'Los Angeles', State:'CA', Zip:'90015'},
+{Name:'Dan', Phone:'1231230004', Street:'400 Vermont Ave', City:'Los Angeles', State:'CA', Zip:'90020'},
+{Name:'David', Phone:'1231230005', Street:'500 Vermont Ave', City:'Los Angeles', State:'CA', Zip:'90025'}])
+db.student.insertMany([
+{Name: 'Eddi', Phone: '123123006', Street: '100 Normandie Ave', City: 'Los Angeles', State: 'CA', Zip: '90030'}, 
+Name: 'Fred', Phone: '123123007', Street: '200 Normandie Ave', City: 'Los Angeles', State: 'CA', Zip: '90035'}, 
+Name: 'Hank', Phone: '123123008', Street: '300 Normandie Ave', City: 'Los Angeles', State: 'CA', Zip: '90040'}, 
+Name: 'Jack', Phone: '123123009', Street: '400 Normandie Ave', City: 'Los Angeles', State: 'CA', Zip: '90045'}, 
+Name: 'Gorge', Phone: '123123010', Street: '500 Normandie Ave', City: 'Los Angeles', State: 'CA', Zip: '90050'}])
+
+db.student.find({Zip:'90010'})
+db.student.find({phone:'123123005'})
+db.student.createIndex({'Name':1, 'Phone':1}) 
+### Reason for picking index is that we usually refer to someone by name. But two people can have the same name so we are adding the phone number as well in the compund index.  
+db.student.find({Phone:{$gt:'1231230005'}})
+db.student.aggregate([{$indexStats:{}}])
