@@ -1,0 +1,87 @@
+Answer to Question ONE:
+Collection Creation 
+
+db.orders.insertMany( [
+{ _id: 0, productName: "Steel beam", status: "new", quantity: 10 },
+{ _id: 1, productName: "Steel beam", status: "urgent", quantity: 20 }, 
+{ _id: 2, productName: "Steel beam", status: "urgent", quantity: 30 }, 
+{ _id: 3, productName: "Iron rod", status: "new", quantity: 15 },
+{ _id: 4, productName: "Iron rod", status: "urgent", quantity: 50 },
+{ _id: 5, productName: "Iron rod", status: "urgent", quantity: 10 } ]) 
+
+Part a)
+
+db.orders.aggregate( [
+{ $group: { _id: "$productName", sumQuantity: { $sum: "$quantity" } } } ])
+Output :
+{ _id: 'Steel beam', sumQuantity: 60 }
+{ _id: 'Iron rod', sumQuantity: 75 }
+
+Stages in Pipeline: 1
+
+Part b)
+
+db.orders.aggregate( [
+{ $match: { status: "urgent" } },
+{ $group: { _id: "$productName", sumQuantity: { $sum: "$quantity" } } } ])
+Output :
+{ _id: 'Steel beam', sumQuantity: 50 }
+{ _id: 'Iron rod', sumQuantity: 60 }
+
+Stages in Pipeline: 2
+
+Part c)
+
+db.orders.aggregate( [
+{ $group: { _id: ["$productName", "$status"], sumQuantity: { $sum: "$quantity" } } } ])
+Output :
+{ _id: [ 'Steel beam', 'new' ], sumQuantity: 10 }
+{ _id: [ 'Steel beam', 'urgent' ], sumQuantity: 50 }
+{ _id: [ 'Iron rod', 'new' ], sumQuantity: 15 }
+{ _id: [ 'Iron rod', 'urgent' ], sumQuantity: 60 }
+
+Stages in Pipeline: 1
+
+Part d)
+
+db.orders.aggregate( [ 
+{ $group: { _id: ["$productName","$status"], sumQuantity: { $sum: "$quantity" } } }, { $match : { sumQuantity : { $gte :15 } } } ] )
+Output :
+{ _id: [ 'Iron rod', 'urgent' ], sumQuantity: 60 }
+{ _id: [ 'Iron rod', 'new' ], sumQuantity: 15 }
+{ _id: [ 'Steel beam', 'urgent' ], sumQuantity: 50 }
+
+Stages in Pipeline: 2
+
+################################################################################################################################################################## 
+
+Answer to question TWO:
+
+Part a)
+
+db.grades.distinct("class_id").length
+Output: 501
+
+Part b)
+
+db.grades.distinct("student_id").length
+Output: 10000
+
+
+Part c)
+
+db.grades.aggregate([{$match:{class_id:212}},{$unwind:"$scores"},{$group:{_id:"$scores.type", avgScore:{$avg:"$scores.score"}}}])
+Output:
+{ _id: 'homework', avgScore: 51.28406633092742 }
+{ _id: 'exam', avgScore: 49.32031796981391 }
+{ _id: 'quiz', avgScore: 51.52482268546838 }
+
+Part d)
+
+db.grades.aggregate([{$match:{class_id:212}},{$unwind:"$scores"},{$group:{_id:"$scores.type", stdScore:{$stdDevPop:"$scores.score"}}}])
+Output :
+{ _id: 'homework', stdScore: 29.757907252683353 }
+{ _id: 'quiz', stdScore: 29.7375408039823 }
+{ _id: 'exam', stdScore: 29.280553806350333 }
+
+
