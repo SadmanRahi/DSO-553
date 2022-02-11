@@ -1,0 +1,31 @@
+Answer to Question 1
+
+db.widgetSales.aggregate([{ $group: { _id: {$dateToString:{format:"%Y-%m",date:"$date"}}, 
+monthlySales: { $sum: { $multiply: ["$unitPrice", "$quantity"] } } } },
+{$out:"widgetSalesMonthlyAgg"}])
+db.widgetSalesMonthlyAgg.find()
+
+Output :
+{ _id: '2018-12', monthlySales: Decimal128("4366") }
+{ _id: '2019-01', monthlySales: Decimal128("3496") }
+
+
+Answer to Question 2
+db.orders.aggregate(
+  { $project : { productName : 1, status : 1, _id : 0 } })
+  
+Output:
+{ productName: 'Steel beam', status: 'new' }
+{ productName: 'Steel beam', status: 'urgent' }
+{ productName: 'Steel beam', status: 'urgent' }
+{ productName: 'Iron rod', status: 'new' }
+{ productName: 'Iron rod', status: 'urgent' }
+{ productName: 'Iron rod', status: 'urgent' }
+
+Indexing on productname and then on status.
+
+This will allow to check if the product is available at get go and then the status will allow the user to know what status is associated with said product.
+
+db.orders.createIndex({'productName':1, 'status':1})
+db.orders.stats()
+totalIndexSize: 40960
