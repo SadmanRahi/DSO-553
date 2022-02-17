@@ -1,0 +1,8 @@
+Question 1
+
+Part – 1  
+MATCH (p:Person)-[r:DIRECTED]->() RETURN DISTINCT (p)
+
+Part – 2 
+MATCH (p:Person)-[r:ACTED_IN]->() RETURN DISTINCT (p)
+
